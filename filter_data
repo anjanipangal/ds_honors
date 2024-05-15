@@ -1,0 +1,14 @@
+import pandas as pd
+
+# Step 1: Load your list of 4000 accession numbers from the text file
+with open('', 'r') as file:
+    accession_numbers_list = [line.strip() for line in file]
+
+# Step 2: Load the CSV file containing the table with multiple columns
+df = pd.read_csv('', engine = 'python')
+
+# Step 3: Filter the rows with matching accession numbers
+filtered_df = df[df['Accession Number'].isin(accession_numbers_list)]
+
+# Step 4: Save the filtered DataFrame to a new CSV file
+filtered_df.to_csv('filtered_data.csv', index=False)
