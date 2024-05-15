@@ -1,0 +1,18 @@
+import re
+
+def preprocess_text(report):
+    # Regular expressions for different sections, accounting for variations in "Comparison" and "History"
+    comparison_re_all = r"(COMPARISON:|Comparison:) (.*?)(\n(?=HISTORY:|History:)|\n(?=IMPRESSION:)|\n(?=FINDINGS/IMPRESSION:)|$)"
+    history_re_all = r"(HISTORY:|History:) (.*?)\n(?=(COMPARISON:|Comparison:)|IMPRESSION:|FINDINGS/IMPRESSION:|$)"
+    impression_re_all = r"(IMPRESSION:|FINDINGS/IMPRESSION:)\n(.*?)(\nReport dictated by:|\nFINDINGS:|\nEND OF IMPRESSION:|END OF IMPRESSION|$)"
+    # Extracting the required sections
+    comparison_match = re.search(comparison_re_all, report, re.DOTALL)
+    history_match = re.search(history_re_all, report, re.DOTALL)
+    impression_match = re.search(impression_re_all, report, re.DOTALL)
+    comparison = comparison_match.group(2).strip() if comparison_match else ""
+    history = history_match.group(2).strip() if history_match else ""
+    impression = impression_match.group(2).strip() if impression_match else ""
+    # Removing the header from the impression
+    impression = re.sub(r'^IMPRESSION:\n', '', impression, flags=re.MULTILINE)
+    impression = re.sub(r'^FINDINGS/IMPRESSION:\n', '', impression, flags=re.MULTILINE)
+    return comparison, history, impression
