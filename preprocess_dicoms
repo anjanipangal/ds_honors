@@ -1,0 +1,27 @@
+import os
+import pydicom as dcm
+import shutil
+
+source_folder = ''
+destination_folder = ''
+
+def preprocess_dcm_file(file_path):
+    try:
+        ds = dcm.dcmread(file_path)
+        if 'Image Storage' in ds.SOPClassUID.name and 'ViewPosition' in ds and ds.ViewPosition != 'LL':
+            return True
+    except dcm.errors.InvalidDicomError:
+        pass
+    return False
+
+# Create the destination folder if it doesn't exist
+os.makedirs(destination_folder, exist_ok=True)
+
+# List all files in the source folder
+for filename in os.listdir(source_folder):
+    file_path = os.path.join(source_folder, filename)
+
+    if preprocess_dcm_file(file_path):
+        # Create the destination path and move the valid image file
+        destination_path = os.path.join(destination_folder, filename)
+        shutil.move(file_path, destination_path)
