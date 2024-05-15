@@ -1,0 +1,37 @@
+import os
+import pydicom as dcm
+from pydicom import dcmread
+
+def get_accession_numbers(valid_dicom_folder):
+    accession_numbers = []
+
+    # List all DICOM files in the valid_dicom_folder
+    for root, _, files in os.walk(valid_dicom_folder):
+        for file in files:
+            if file.lower().endswith(".dcm"):
+                ds = dcmread(os.path.join(root, file))
+                accession_number = ds.AccessionNumber
+                if accession_number:
+                    accession_numbers.append(accession_number)
+
+    return accession_numbers
+
+def save_accession_numbers(accession_numbers, output_file):
+    with open(output_file, 'w') as file:
+        for accession_number in accession_numbers:
+            file.write(accession_number + '\n')
+
+# Replace 'valid_dicom_folder' with the path to your folder containing valid DICOM files
+valid_dicom_folder = ''
+
+# Get accession numbers
+accession_numbers = get_accession_numbers(valid_dicom_folder)
+
+# Specify the path for the output file
+output_file = ''
+
+# Save the accession numbers to a text file
+save_accession_numbers(accession_numbers, output_file)
+
+# Accession numbers are now saved in 'accession_numbers.txt'
+print(f"Accession numbers have been saved to {output_file}")
